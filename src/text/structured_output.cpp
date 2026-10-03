@@ -12,6 +12,25 @@ namespace ninfer::text {
 namespace {
 using Json = nlohmann::ordered_json;
 
+bool schema_value_equal(const Json& left, const Json& right) {
+    if (left.is_number() && right.is_number())
+        return left.get<long double>() == right.get<long double>();
+    if (left.is_object() && right.is_object()) {
+        if (left.size() != right.size()) return false;
+        for (const auto& [key, value] : left.items()) {
+            if (!right.contains(key) || !schema_value_equal(value, right.at(key))) return false;
+        }
+        return true;
+    }
+    if (left.is_array() && right.is_array()) {
+        if (left.size() != right.size()) return false;
+        for (std::size_t index = 0; index < left.size(); ++index)
+            if (!schema_value_equal(left[index], right[index])) return false;
+        return true;
+    }
+    return left == right;
+}
+
 void schema_check(const Json& s) {
     if (s.is_boolean()) { return; }
     if (!s.is_object()) { throw std::invalid_argument("JSON schema must be an object or boolean"); }
@@ -26,6 +45,8 @@ void schema_check(const Json& s) {
                                                               "prefixItems",
                                                               "minItems",
                                                               "maxItems",
+                                                              "pattern",
+                                                              "format",
                                                               "minLength",
                                                               "maxLength",
                                                               "enum",
@@ -61,6 +82,32 @@ void schema_check(const Json& s) {
         if (!annotations.contains(key) && !supported.contains(key)) {
             throw std::invalid_argument("unsupported JSON schema keyword: " + key);
         }
+        if (key == "required") {
+            if (!value.is_array()) throw std::invalid_argument("required must be an array of unique property names");
+            std::unordered_set<std::string> names;
+            for (const auto& name : value) {
+                if (!name.is_string() || !names.insert(name.get<std::string>()).second)
+                    throw std::invalid_argument("required must be an array of unique property names");
+                const bool declared = s.contains("properties") && s.at("properties").is_object() &&
+                                      s.at("properties").contains(name.get<std::string>());
+                if (!declared && s.contains("additionalProperties") && s.at("additionalProperties") == false)
+                    throw std::invalid_argument("required property is forbidden by additionalProperties: " + name.get<std::string>());
+            }
+        }
+        if (key == "pattern" || key == "format") {
+            if (!value.is_string() || !s.contains("type") || s.at("type") != "string") {
+                throw std::invalid_argument(key + " requires a string value and explicit string type");
+            }
+            // The pinned converter chooses one string representation. Refuse conjunctions
+            // until their intersection is implemented; never silently discard a bound.
+            if (s.contains("minLength") || s.contains("maxLength") ||
+                (s.contains("pattern") && s.contains("format"))) {
+                throw std::invalid_argument("pattern/format cannot be combined with length bounds or each other");
+            }
+            if (key == "format" && value != "date" && value != "date-time" && value != "time") {
+                throw std::invalid_argument("unsupported asserted string format: " + value.get<std::string>());
+            }
+        }
         if (key == "$ref" &&
             (!value.is_string() || (value != "#" && !value.get<std::string>().starts_with("#/")))) {
             throw std::invalid_argument("JSON schema supports only local fragment $ref values");
@@ -91,6 +138,15 @@ void schema_check(const Json& s) {
         if (!s.contains(branch)) { continue; }
         for (const auto& [key, value] : s.items()) {
             if (key != branch && !annotations.contains(key)) {
+                // Pydantic Literal may emit both assertions. Compile the constant only
+                // when it satisfies enum as well; object order and number kinds are semantic.
+                if (((std::string_view(branch) == "const" && key == "enum") ||
+                     (std::string_view(branch) == "enum" && key == "const")) &&
+                    s.at("enum").is_array() &&
+                    std::any_of(s.at("enum").begin(), s.at("enum").end(),
+                                [&](const auto& candidate) { return schema_value_equal(s.at("const"), candidate); })) {
+                    continue;
+                }
                 if (key == "type" &&
                     (std::string_view(branch) == "enum" || std::string_view(branch) == "const")) {
                     const auto matches = [&](const Json& v) {

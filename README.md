@@ -1,4 +1,55 @@
-# NInfer
+# RUR1NINFER
+
+Source fork of [NInfer](https://github.com/Neroued/ninfer), based on
+[structured-output PR #294](https://github.com/Neroued/ninfer/pull/294)
+at `79d229656b297ff9932a58c3664dd56d87a73522`.
+
+This branch contains the locally qualified native XGrammar changes:
+
+- JSON Schema `pattern` search semantics, ECMA262 dot/whitespace handling and explicit rejection of unsupported syntax.
+- Asserted `date`, `date-time` and `time` formats with Gregorian calendar validation.
+- JSON string escaping, Unicode scalar values, valid surrogate pairs and malformed UTF-8 rejection.
+- Required object properties and schema-cache identities that preserve business keys and literal values.
+- Compatible `const`/`enum` intersections, including Pydantic `Literal` output.
+- Independent CPU oracle and byte-vocabulary matcher probes.
+
+Unsupported assertions fail compilation instead of silently weakening constraints.
+See [the serving contract](docs/serving.md#structured-output) for the supported subset.
+
+## Qualification
+
+The maintained candidate passed 4,959 independent CPU cases, eight native CPU
+protocol/grammar tests and the native live protocol assertions. The CPU total
+includes five optional application-schema compilation checks; the generic oracle
+accepts external schema snapshots through `--schemas`.
+
+RTX 5090 live qualification used eight concurrent requests, 227008 shared FP8 KV
+tokens, 102400 maximum context, vision and MTP with a draft window of three:
+
+- Two eight-request constrained text waves: approximately 929–933 aggregate output tokens/s.
+- Eight independent images: 168/168 checked fields correct in approximately 3.45 seconds.
+- Eight-request long JSON burst: 14475 output tokens in approximately 13.12 seconds.
+- Server-side gauges confirmed eight running/decode-ready rows and average batch size eight.
+
+These are workload-specific measurements, not a same-document cloud comparison.
+The host application's separate schema-compaction and L2L handoff fixes live in
+that application's repository; they are not engine source changes here.
+One background health probe queued during the saturated raw HTTP burst timed out;
+later probes succeeded without a model restart. Raw machine logs, user paths,
+model artifacts, compiled binaries and application documents are excluded.
+
+## Reproduce CPU checks
+
+See [tests/README.md](tests/README.md#cpu-structured-output-qualification).
+The independent oracle requires Python `jsonschema` and Node.js; the native probes
+use a byte vocabulary and do not load a model. Build/runtime requirements and
+artifact conversion remain documented below and in the upstream guides.
+
+The original Apache-2.0 license and third-party notices are retained.
+
+---
+
+## Upstream NInfer
 
 > Selected checkpoints. Maximum single-GPU inference performance.
 

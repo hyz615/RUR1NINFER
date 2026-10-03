@@ -91,18 +91,37 @@ reports that format in its Response object. Anthropic Messages accepts
 
 Supported schema constraints are `type`, `properties`, `required`, `additionalProperties`,
 `items`, `prefixItems`, `minItems`, `maxItems`, `minLength`, `maxLength`, `enum`, `const`,
-`anyOf`, `minimum`, `maximum`, `exclusiveMinimum`, `exclusiveMaximum`, `$defs`, `definitions`,
+`anyOf`, `pattern`, asserted `format` (`date`, `date-time`, `time`), `minimum`, `maximum`, `exclusiveMinimum`, `exclusiveMaximum`, `$defs`, `definitions`,
 and local fragment `$ref` (including recursive schemas).
 Annotations `$schema`, `title`, `description`, `default`, `examples`, and `$comment`
 do not impose generation constraints. Other keywords are rejected with HTTP 400: this includes
-`multipleOf`, `pattern`, `format`, `oneOf`, `allOf`, `uniqueItems`, and conditionals.
+`multipleOf`, other formats, `oneOf`, `allOf`, `uniqueItems`, and conditionals.
+Object required lists contain unique string names. A required name forbidden by
+additionalProperties is rejected; required additional names in open objects inherit the
+additional-property value schema. Schema cache identities preserve complete serialized
+values and declaration order, including metadata-looking business names and literal data.
+A const/enum intersection is supported when the constant is an enum member;
+incompatible intersections are rejected. Value equivalence preserves object-key
+semantics, array order, numeric equality and boolean/number distinctions.
+Pattern/format require explicit string type. Patterns use JSON Schema search semantics and
+JSON-aware escaping; unsupported regex syntax fails compilation. Anchors must occur at the
+pattern boundaries; anchored top-level alternation requires an explicit group.
+Dot and whitespace classes follow ECMA262 Unicode semantics. Backreferences, boundary
+assertions, inline flags, lookarounds and unknown alphabetic escapes are rejected.
+Whitespace class escapes adjacent to a range hyphen, spaced repetition counts and
+stacked/lazy quantifiers are unsupported. Unicode escapes require scalar values or
+valid paired surrogate spellings; an unsupported branch fails the whole schema.
+Pattern/format cannot be combined with each other or length constraints. Temporal formats
+validate Gregorian month lengths and leap years, positive four-digit years, and RFC 3339
+timezones; leap-second spellings are outside the generated subset.
 Numeric bounds require an explicit `integer` or `number` type and finite values within
 `+/- (2^53-1)`. Integer bounds must be whole numbers. Bounded numbers use ordinary decimal
 notation with at most six fractional digits; a range with no representable value is rejected.
 `$id` and external references are rejected. An explicit `$schema` must be JSON Schema 2020-12
 or draft-07. Local references use `#` or literal object paths such as `#/$defs/node`;
-escaped or empty path segments are rejected. Bounded strings use unescaped Unicode characters; escaped quotes, backslashes,
-and control characters are excluded from that generated subset. Nonnegative length/item bounds
+escaped or empty path segments are rejected. Strings accept Unicode scalar values via raw UTF-8, short JSON escapes or Unicode
+escapes (including valid surrogate pairs); lone surrogates and malformed UTF-8 are
+rejected. Length bounds count decoded Unicode scalars, independent of escape spelling. Nonnegative length/item bounds
 must fit a signed 32-bit integer. `$ref` and `anyOf` cannot have sibling constraints; `const`
 and `enum` allow a matching single `type` declaration but no other sibling constraints. Move
 constraints into the referenced schema or each union branch. Missing `additionalProperties`
