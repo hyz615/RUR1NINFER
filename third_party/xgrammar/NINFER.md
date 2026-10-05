@@ -26,3 +26,10 @@ values and canonical UTF-8. JSON-string regexes match decoded logical characters
 raw UTF-8, short JSON escapes and Unicode escape spellings. ECMA262 dot and whitespace
 sets are normalized by the schema converter; unsupported regex assertions fail closed.
 CPU coverage includes test_unicode_scalar_output.cpp and the native_schema_probe.
+
+Project schema compatibility supplement: the text compiler distributes proven
+anyOf type/required intersections before XGrammar compilation. String-array
+uniqueness is enforced by request-owned incremental semantic masks, not by dropping
+the assertion from public JSON or by rewriting completed arrays. Object upper
+bounds use the existing vendored object generator. CPU equivalence, prefix
+reachability and committed/speculative-state regressions guard these contracts.

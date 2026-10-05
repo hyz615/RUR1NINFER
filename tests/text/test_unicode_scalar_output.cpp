@@ -1,5 +1,6 @@
 #include "text/structured_output.h"
 #include <iostream>
+#include <limits>
 #include <iomanip>
 #include <sstream>
 #include <stdexcept>
@@ -110,6 +111,37 @@ int main() {
             } catch (const std::invalid_argument&) { unsupported_surrogate = true; }
             if (!unsupported_surrogate) {
                 throw std::runtime_error("unpaired-surrogate pattern did not fail explicitly: " + schema);
+            }
+        }
+        // Counted Unicode-scalar repetitions retain all spelling and length bounds.
+        const auto repeat_text = [](const std::string& unit, int count) {
+            std::string text;
+            for (int i = 0; i < count; ++i) text += unit;
+            return text;
+        };
+        const std::vector<std::string> scalar_spellings = {
+            "a", "中", "😀", R"(\u0061)", R"(\u4e2d)", R"(\ud83d\ude00)", R"(\n)"};
+        for (int maximum : {127, 128, 129, 180}) {
+            const std::string bounded = std::string(R"({"type":"string","minLength":1,"maxLength":)") +
+                std::to_string(maximum) + "}";
+            for (const auto& unit : scalar_spellings) {
+                if (!accepts(bounded, repeat_text(unit, maximum)) ||
+                    accepts(bounded, repeat_text(unit, maximum + 1)) || accepts(bounded, "")) {
+                    throw std::runtime_error("counted scalar length boundary changed");
+                }
+            }
+        }
+        const std::string large_bound = std::string(R"({"type":"string","maxLength":)") +
+            std::to_string(std::numeric_limits<int>::max()) + "}";
+        if (!accepts(large_bound, "") || !accepts(large_bound, R"(\ud83d\ude00)")) {
+            throw std::runtime_error("large scalar bound did not use a counted FSM");
+        }
+        const std::string lower_only = R"({"type":"string","minLength":180})";
+        for (const auto& unit : scalar_spellings) {
+            if (accepts(lower_only, repeat_text(unit, 179)) ||
+                !accepts(lower_only, repeat_text(unit, 180)) ||
+                !accepts(lower_only, repeat_text(unit, 181))) {
+                throw std::runtime_error("unbounded scalar minimum changed");
             }
         }
         std::cout << "Unicode scalar and UTF-8 protocol boundaries passed\n";

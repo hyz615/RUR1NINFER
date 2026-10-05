@@ -95,7 +95,8 @@ Supported schema constraints are `type`, `properties`, `required`, `additionalPr
 and local fragment `$ref` (including recursive schemas).
 Annotations `$schema`, `title`, `description`, `default`, `examples`, and `$comment`
 do not impose generation constraints. Other keywords are rejected with HTTP 400: this includes
-`multipleOf`, other formats, `oneOf`, `allOf`, `uniqueItems`, and conditionals.
+`multipleOf`, other formats, `oneOf`, `allOf`, and conditionals.
+Unsupported `uniqueItems` item domains and intersections are also rejected.
 Object required lists contain unique string names. A required name forbidden by
 additionalProperties is rejected; required additional names in open objects inherit the
 additional-property value schema. Schema cache identities preserve complete serialized
@@ -103,6 +104,30 @@ values and declaration order, including metadata-looking business names and lite
 A const/enum intersection is supported when the constant is an enum member;
 incompatible intersections are rejected. Value equivalence preserves object-key
 semantics, array order, numeric equality and boolean/number distinctions.
+Common `type` and `required` assertions beside `anyOf` are distributed to every
+branch as intersections; branch-specific assertions remain intact. Conflicting
+branches are removed only when impossibility is proved. Other unimplemented
+applicator intersections still fail compilation.
+`maxProperties` is an asserted object upper bound. A `$id` is accepted as harmless
+resource metadata only if its resource subtree contains no schema references;
+scoped reference resolution through resource identifiers remains unsupported.
+`uniqueItems: true` uses request-owned semantic token masks for unrestricted
+string arrays and finite string enum/const arrays. Equivalent JSON escape spellings
+are compared as decoded strings; finite domains cannot repeat a value or continue
+after exhaustion. Arrays limited to zero/one items are inherently unique. Item
+pattern/format/length intersections and ambiguous union contexts that cannot be
+proved safe are rejected; arbitrary unique object/number arrays are not advertised.
+Semantic state follows accepted tokens, independent forks and speculative draft
+columns, including reasoning-to-JSON boundaries. Ordinary schemas have no semantic
+vocabulary-filter pass.
+For unambiguous string length constraints, the native semantic plan enforces
+decoded-scalar bounds through immutable vocabulary bitsets and request-owned
+incremental counters. Only these delegated assertions are removed from the
+internal CFG projection; the input schema, literals and property names retain
+their assertions. Correlated alternatives that cannot be proved safe keep their
+length constraints in the grammar. This is constrained decoding, with no
+unconstrained response fallback. Scalar counters and string uniqueness share the
+same independent fork/draft, reasoning and tool-envelope state boundaries.
 Pattern/format require explicit string type. Patterns use JSON Schema search semantics and
 JSON-aware escaping; unsupported regex syntax fails compilation. Anchors must occur at the
 pattern boundaries; anchored top-level alternation requires an explicit group.
@@ -117,14 +142,16 @@ timezones; leap-second spellings are outside the generated subset.
 Numeric bounds require an explicit `integer` or `number` type and finite values within
 `+/- (2^53-1)`. Integer bounds must be whole numbers. Bounded numbers use ordinary decimal
 notation with at most six fractional digits; a range with no representable value is rejected.
-`$id` and external references are rejected. An explicit `$schema` must be JSON Schema 2020-12
+Reference-bearing `$id` scopes and external references are rejected. An explicit `$schema` must be JSON Schema 2020-12
 or draft-07. Local references use `#` or literal object paths such as `#/$defs/node`;
 escaped or empty path segments are rejected. Strings accept Unicode scalar values via raw UTF-8, short JSON escapes or Unicode
 escapes (including valid surrogate pairs); lone surrogates and malformed UTF-8 are
 rejected. Length bounds count decoded Unicode scalars, independent of escape spelling. Nonnegative length/item bounds
-must fit a signed 32-bit integer. `$ref` and `anyOf` cannot have sibling constraints; `const`
-and `enum` allow a matching single `type` declaration but no other sibling constraints. Move
-constraints into the referenced schema or each union branch. Missing `additionalProperties`
+must fit a signed 32-bit integer. `$ref` cannot have sibling constraints; `anyOf` permits
+the proven common `type`/`required` intersections described above. `const` and `enum`
+allow a matching single `type` declaration and compatible const/enum intersections,
+but no other sibling constraints. Move other assertions into the referenced schema
+or each union branch. Missing `additionalProperties`
 and `items` retain JSON Schema defaults. Properties are emitted in schema declaration order;
 this is a valid subset of the requested schema. Whitespace between JSON elements is bounded to
 eight characters per run to prevent whitespace-only generation loops. Additional-property key spellings are restricted

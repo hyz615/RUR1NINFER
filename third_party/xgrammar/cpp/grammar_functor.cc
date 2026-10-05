@@ -1,4 +1,3 @@
-// RUR1NINFER modifications: JSON regex FSM dispatch. Original license retained.
 /*!
  *  Copyright (c) 2024 by Contributors
  * \file xgrammar/grammar_functor.cc
@@ -3132,6 +3131,36 @@ void GrammarFSMHasherImpl::Apply(Grammar* grammar) {
 
   // Get the reference graph.
   ref_graph_from_referee_to_referrer_ = RuleRefGraphFinder().Apply(*grammar);
+  // Regex FSM construction can append counted-repeat subrules that have no
+  // RuleRef expression in the source AST. Include these actual FSM dependencies
+  // before hashing parents; otherwise a parent observes an uncomputed child hash.
+  for (int32_t referer = 0; referer < (*grammar)->NumRules(); ++referer) {
+    const auto& rule_fsm = grammar->ImplPtr()->per_rule_fsms[referer];
+    if (!rule_fsm.has_value()) continue;
+    const auto& fsm = rule_fsm->GetFsm();
+    std::unordered_set<int32_t> visited;
+    std::queue<int32_t> pending;
+    pending.push(fsm.GetStart());
+    visited.insert(fsm.GetStart());
+    while (!pending.empty()) {
+      const int32_t current = pending.front();
+      pending.pop();
+      for (const auto& edge : fsm.GetFsm().GetEdges(current)) {
+        int32_t referee = -1;
+        if (edge.IsRuleRef()) referee = edge.GetRefRuleId();
+        else if (edge.IsRepeatRef()) {
+          referee = grammar->ImplPtr()->complete_fsm.GetRepeatEdgeInfo(edge.GetAuxIndex()).RuleId();
+        }
+        if (referee >= 0) {
+          auto& referers = ref_graph_from_referee_to_referrer_[referee];
+          if (std::find(referers.begin(), referers.end(), referer) == referers.end()) {
+            referers.push_back(referer);
+          }
+        }
+        if (visited.insert(edge.target).second) pending.push(edge.target);
+      }
+    }
+  }
   ref_graph_from_referrer_to_referee_ = std::vector<std::vector<int32_t>>((*grammar)->NumRules());
   for (int referee = 0; referee < static_cast<int>(ref_graph_from_referee_to_referrer_.size());
        ++referee) {

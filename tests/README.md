@@ -281,3 +281,31 @@ python3 tests/text/native_schema_oracle.py --native-results native.jsonl --repor
 This host qualification establishes supported grammar semantics. Actual tokenizer,
 speculative decoding, vision/concurrency and end-to-end application qualification
 require separately authorized real-model tests before selecting the fork in production.
+
+The `ninfer_unique_strings_test`, `ninfer_structured_unique_test` and
+`ninfer_unique_strings_masks_test` are CPU-only. They exercise decoded-string
+equality, remaining enum prefixes, nested scopes, rollback/forks, actual mask versus
+commit consistency, multi-item vocabulary tokens, EOS and reasoning/MTP boundaries.
+The JSONL `ninfer_schema_normalization_probe` reports normalized schemas for an
+independent JSON Schema validator to compare accepted instances. Neither probe
+loads model artifacts.
+
+`ninfer_string_lengths_test` checks original-schema scalar bounds, raw/escaped
+Unicode, surrogate pairs, references, tuples, safe projection, literal data and
+independent parser forks. `ninfer_semantic_bulk_masks_test` checks vocabulary
+bitmasks against definitive acceptance, multi-character tokens, UTF-8 fragments,
+and overlapping reasoning delimiters.
+
+```bash
+cmake --build build --target ninfer_string_lengths_test ninfer_semantic_bulk_masks_test ninfer_native_schema_probe
+ctest --test-dir build -R '^ninfer_(structured_output|unicode_scalar_output|unique_strings|structured_unique|unique_strings_masks|string_lengths|semantic_bulk_masks)_test$' --output-on-failure
+python3 tests/text/schema_semantics_oracle.py --output semantic-corpus.jsonl
+build/tests/ninfer_native_schema_probe < semantic-corpus.jsonl > semantic-native.jsonl
+python3 tests/text/compare_schema_semantics.py --cases semantic-corpus.jsonl --results semantic-native.jsonl --report semantic-comparison.json
+```
+
+The portable semantic oracle uses independent Draft 2020-12 validation of the
+original schema. Invalid accepted values always fail; declared compile errors
+and serialization restrictions are reported separately.
+See [constrained-decode performance](../docs/performance/structured-output.md)
+for the measured CPU/GPU boundaries and qualification scope.

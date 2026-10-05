@@ -1,4 +1,3 @@
-// RUR1NINFER modifications: scalar-safe UTF-8 ranges and logical JSON-string regex encoding. Original license retained.
 /*!
  *  Copyright (c) 2025 by Contributors
  * \file xgrammar/fsm_builder.cc
@@ -10,6 +9,8 @@
 #include <algorithm>
 #include <array>
 #include <cctype>
+#include <charconv>
+#include <limits>
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
@@ -840,8 +841,8 @@ class RegexIR {
 };
 
 Result<std::pair<int, int>> RegexIR::CheckRepeat(const std::string& regex, int& start) {
-  // 10^9 fits in an int; longer counts would overflow.
-  constexpr size_t kMaxRepeatDigits = 9;
+  // Repetition counters use int; decimal bounds may have digits10 + 1 digits.
+  constexpr size_t kMaxRepeatDigits = std::numeric_limits<int>::digits10 + 1;
   if (regex[start] != '{') {
     return ResultErr("Invalid repetition: expected '{'");
   }
@@ -863,7 +864,12 @@ Result<std::pair<int, int>> RegexIR::CheckRepeat(const std::string& regex, int& 
   if (num_str.size() > kMaxRepeatDigits) {
     return ResultErr("Invalid repetition count: the count " + num_str + " is too large");
   }
-  lower_bound = std::stoi(num_str);
+  {
+    auto result = std::from_chars(num_str.data(), num_str.data() + num_str.size(), lower_bound);
+    if (result.ec != std::errc{} || result.ptr != num_str.data() + num_str.size()) {
+      return ResultErr("Invalid repetition count: the count " + num_str + " is too large");
+    }
+  }
   while (static_cast<size_t>(start) < regex.size() && regex[start] == ' ') {
     start++;
   }
@@ -895,7 +901,12 @@ Result<std::pair<int, int>> RegexIR::CheckRepeat(const std::string& regex, int& 
   if (num_str.size() > kMaxRepeatDigits) {
     return ResultErr("Invalid repetition count: the count " + num_str + " is too large");
   }
-  upper_bound = std::stoi(num_str);
+  {
+    auto result = std::from_chars(num_str.data(), num_str.data() + num_str.size(), upper_bound);
+    if (result.ec != std::errc{} || result.ptr != num_str.data() + num_str.size()) {
+      return ResultErr("Invalid repetition count: the count " + num_str + " is too large");
+    }
+  }
   if (upper_bound < lower_bound) {
     return ResultErr(
         "Invalid repetition count: the lower bound " + std::to_string(lower_bound) +

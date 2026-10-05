@@ -137,6 +137,10 @@ int main() {
         require(!accepts_schema_value(timestamp, R"("2026-10-03T24:00:00Z")"), "timestamp ignored time bounds");
         require(!accepts_schema_value(timestamp, R"("2026-10-03T12:00:00")"), "timestamp lost required timezone");
 
+        auto object_union = compiler.compile({StructuredOutputKind::JsonSchema,
+            R"({"anyOf":[{}],"type":"object"})"});
+        require(accepts_value(object_union, "{}") && !accepts_value(object_union, "1"),
+                "anyOf common type was dropped");
         auto rating = compiler.compile(
             {StructuredOutputKind::JsonSchema, R"({"type":"number","minimum":0,"maximum":10})"});
         require(accepts_value(rating, "0") && accepts_value(rating, "10") &&
@@ -203,7 +207,7 @@ int main() {
              {R"({"type":"array","uniqueItems":true})",
               R"({"$ref":"#/$defs/a~1b","$defs":{"a/b":{"const":1},"a~1b":{"const":2}}})",
               R"({"oneOf":[{},{}]})", R"({"$ref":"https://example.org/schema"})",
-              R"({"const":1,"type":"string"})", R"({"anyOf":[{}],"type":"object"})",
+              R"({"const":1,"type":"string"})",
               R"({"type":"integer","minimum":3,"maximum":2})", R"({"type":"number","minimum":"0"})",
               R"({"type":"number","minimum":0.0000001,"maximum":0.0000002})", R"({"minimum":0})",
               R"({"type":"number","minimum":1e30})"}) {

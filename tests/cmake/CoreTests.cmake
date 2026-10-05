@@ -62,3 +62,27 @@ ninfer_add_test(ninfer_unicode_scalar_output_test
 add_executable(ninfer_native_schema_probe "${CMAKE_CURRENT_LIST_DIR}/../text/native_schema_probe.cpp")
 target_link_libraries(ninfer_native_schema_probe PRIVATE ninfer_text ninfer::json)
 ninfer_test_includes(ninfer_native_schema_probe)
+
+add_executable(ninfer_schema_normalization_probe "${CMAKE_CURRENT_LIST_DIR}/../text/schema_normalization_probe.cpp")
+ninfer_test_includes(ninfer_schema_normalization_probe)
+target_link_libraries(ninfer_schema_normalization_probe PRIVATE ninfer_text ninfer::json)
+
+ninfer_add_test(ninfer_unique_strings_test
+  SOURCES "${CMAKE_CURRENT_LIST_DIR}/../text/test_unique_strings.cpp"
+  LIBRARIES ninfer_text ninfer::json)
+
+ninfer_add_test(ninfer_structured_unique_test
+  SOURCES "${CMAKE_CURRENT_LIST_DIR}/../text/test_structured_unique.cpp"
+  LIBRARIES ninfer_text ninfer::json)
+
+ninfer_add_test(ninfer_unique_strings_masks_test
+  SOURCES "${CMAKE_CURRENT_LIST_DIR}/../text/test_unique_strings_masks.cpp"
+  LIBRARIES ninfer_text ninfer::json)
+
+ninfer_add_test(ninfer_string_lengths_test
+  SOURCES "${CMAKE_CURRENT_LIST_DIR}/../text/test_string_lengths.cpp"
+  LIBRARIES ninfer_text ninfer::json)
+
+ninfer_add_test(ninfer_semantic_bulk_masks_test
+  SOURCES "${CMAKE_CURRENT_LIST_DIR}/../text/test_semantic_bulk_masks.cpp"
+  LIBRARIES ninfer_text ninfer::json)

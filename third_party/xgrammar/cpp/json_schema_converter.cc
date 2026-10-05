@@ -1,4 +1,3 @@
-// RUR1NINFER modifications: pattern/format semantics, object constraints, and complete schema cache identities. Original license retained.
 /*!
  *  Copyright (c) 2024 by Contributors
  * \file xgrammar/json_schema_converter.cc
@@ -2552,9 +2551,17 @@ int32_t JSONSchemaConverter::GenerateString(const StringSpec& spec, const std::s
   }
   // Check for length constraints
   if (spec.min_length != 0 || spec.max_length != -1) {
-    // One repeated FSM atom represents one decoded Unicode scalar, irrespective of JSON spelling.
-    int32_t character = RegexExpression(R"([\u0000-\u{10ffff}])", true);
-    int32_t body = Repeat(rule_name + "_characters", character, spec.min_length, spec.max_length);
+    // Keep the repetition in the JSON-aware regex FSM. Expanding it into grammar
+    // helper rules creates nullable tails/lookaheads that make vocabulary masks
+    // expensive near ordinary string length limits. Each atom still consumes one
+    // decoded scalar, including short escapes and paired-surrogate spellings.
+    std::string count = "{" + std::to_string(spec.min_length) + ",";
+    if (spec.max_length >= 0) count += std::to_string(spec.max_length);
+    count += "}";
+    // This internally constructed regex uses already validated integer bounds.
+    // AddRegex defers construction to the builder-aware path, which preserves
+    // large bounds as counted repeat edges rather than physically unrolling them.
+    int32_t body = builder_.AddRegex(std::string(R"([\u0000-\u{10ffff}])") + count, true);
     return Sequence({ByteString("\""), body, ByteString("\"")});
   }
   // Default string
