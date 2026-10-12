@@ -1,0 +1,24 @@
+{
+  "component": "RUR1NINFER",
+  "engine_version": "1.0.1",
+  "public_repository": "https://github.com/hyz615/RUR1NINFER",
+  "upstream_repository": "https://github.com/Neroued/ninfer",
+  "engine_sha256": "ca3bc3f6746888c695f8ec1121366baa0f5b1fb1eea53623db3ce1e8b5872dfd",
+  "observed_engine_sha256": "ca3bc3f6746888c695f8ec1121366baa0f5b1fb1eea53623db3ce1e8b5872dfd",
+  "binary_bundle_sha256": "f2edc38a8ef7351acd4786f7f76493d1f4cbf93528404d2ebc0b32c9b4a9927f",
+  "source_archive_sha256": "f34e7d0da683d788ba1b469d40f2b1a2bf80165e1defa4d9601a22c447d21917",
+  "source_tree_sha256": "182bcba520bf791c0520ee6796279bcedbbbfff4be11e0da5b992916fc704a2b",
+  "source_file_count": 1679,
+  "source_snapshot_vs_build_checkout_mismatches": [],
+  "high_confidence_secret_pattern_findings": [],
+  "unowned_runtime_sonames": [
+    "libcuda.so.1"
+  ],
+  "limitations": [
+    "Runtime package versions are observed audit-environment versions, not a reconstructed historical installation log.",
+    "Reproducible compilation has not been rerun; the existing binary and corresponding source snapshot were preserved.",
+    "GPL/CUDA combined-distribution conditions remain a separate legal question; source publication alone does not establish them."
+  ],
+  "original_source_archive": "licenses/source.tar.gz",
+  "source_location": "repository root; SOURCE_FILES.json records the exact original 1679-file snapshot"
+}

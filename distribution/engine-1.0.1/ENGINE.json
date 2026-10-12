@@ -1,0 +1,12 @@
+{
+  "version": "1.0.1",
+  "source_revision": "79d229656b297ff9932a58c3664dd56d87a73522",
+  "source_dirty": true,
+  "built_at": "2026-10-09T04:01:17.909327+00:00",
+  "artifact_container": {
+    "magic": "NINFER",
+    "version": 3
+  },
+  "cuda_runtime": "13.1.80",
+  "executable_sha256": "ca3bc3f6746888c695f8ec1121366baa0f5b1fb1eea53623db3ce1e8b5872dfd"
+}

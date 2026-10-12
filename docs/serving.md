@@ -142,16 +142,14 @@ timezones; leap-second spellings are outside the generated subset.
 Numeric bounds require an explicit `integer` or `number` type and finite values within
 `+/- (2^53-1)`. Integer bounds must be whole numbers. Bounded numbers use ordinary decimal
 notation with at most six fractional digits; a range with no representable value is rejected.
-Reference-bearing `$id` scopes and external references are rejected. An explicit `$schema` must be JSON Schema 2020-12
+`$id` and external references are rejected. An explicit `$schema` must be JSON Schema 2020-12
 or draft-07. Local references use `#` or literal object paths such as `#/$defs/node`;
 escaped or empty path segments are rejected. Strings accept Unicode scalar values via raw UTF-8, short JSON escapes or Unicode
 escapes (including valid surrogate pairs); lone surrogates and malformed UTF-8 are
 rejected. Length bounds count decoded Unicode scalars, independent of escape spelling. Nonnegative length/item bounds
-must fit a signed 32-bit integer. `$ref` cannot have sibling constraints; `anyOf` permits
-the proven common `type`/`required` intersections described above. `const` and `enum`
-allow a matching single `type` declaration and compatible const/enum intersections,
-but no other sibling constraints. Move other assertions into the referenced schema
-or each union branch. Missing `additionalProperties`
+must fit a signed 32-bit integer. `$ref` and `anyOf` cannot have sibling constraints; `const`
+and `enum` allow a matching single `type` declaration but no other sibling constraints. Move
+constraints into the referenced schema or each union branch. Missing `additionalProperties`
 and `items` retain JSON Schema defaults. Properties are emitted in schema declaration order;
 this is a valid subset of the requested schema. Whitespace between JSON elements is bounded to
 eight characters per run to prevent whitespace-only generation loops. Additional-property key spellings are restricted

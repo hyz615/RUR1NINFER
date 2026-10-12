@@ -1,0 +1,39 @@
+RUR1NINFER engine 1.0.1: corresponding-source build notes
+
+This source is the exact file content of the source.tar.gz shipped inside the
+existing engine bundle, including the source_dirty changes. It is not a new
+engine release. The original executable remains unchanged.
+
+Environment observed in the original build checkout:
+- Ubuntu 24.04 x86_64; CMake 3.28.3; Ninja 1.11.1; GCC 13.3.0.
+- CUDA Toolkit 13.1, nvcc 13.1.80; GPU code target sm_120a.
+- FFmpeg development/runtime ABI: libavformat 60, libavcodec 60, libavutil 58,
+  libswscale 7. Observed Ubuntu source package: ffmpeg 7:6.1.1-3ubuntu5.
+- libcurl development files and pkg-config are required. Repository-pinned
+  header/source dependencies are already included under third_party/.
+
+Set these shell variables for your own paths; do not reuse the auditor's paths:
+  export NINFER_SOURCE=/path/to/this/source
+  export NINFER_BUILD=/path/to/an/empty/build-directory
+  export CUDACXX=/path/to/cuda/bin/nvcc
+  export BUILD_JOBS=<parallel_jobs>
+
+Configure and build, using the recorded options in BUILD_ENVIRONMENT.json:
+  cmake -S "$NINFER_SOURCE" -B "$NINFER_BUILD" -G Ninja \
+    -DCMAKE_BUILD_TYPE=Release -DCMAKE_CUDA_ARCHITECTURES=120a \
+    -DNINFER_BUILD_APPS=ON -DBUILD_TESTING=ON -DNINFER_BUILD_BENCHMARKS=OFF
+  cmake --build "$NINFER_BUILD" --target ninfer-serve --parallel "$BUILD_JOBS"
+
+No model weights are needed to compile the engine. No model weights, customer
+data, RVX business code, Git history or proprietary CUDA SDK source are included
+in this source disclosure. Install the CUDA SDK separately under NVIDIA's terms.
+
+The original link command is recorded as evidence. A rebuild on a different
+system may produce a different executable hash; bit-for-bit reproducibility has
+not been asserted or tested. Building is not the same as establishing permission
+to redistribute every linked combination. See LICENSE_SCOPE.txt and LEGAL_REVIEW.json.
+
+RUNTIME_PACKAGES.json records the audit machine's actual dynamically loaded
+package versions. It is not a historical installation log of the original build.
+Acquire the corresponding Debian/Ubuntu source package revisions when distributing
+those binaries, including the distribution's patches and debian/rules.

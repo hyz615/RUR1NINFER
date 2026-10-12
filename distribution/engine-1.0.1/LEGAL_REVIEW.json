@@ -1,0 +1,46 @@
+{
+  "status": "source_disclosure_prepared_combined_distribution_unresolved",
+  "facts": [
+    {
+      "topic": "separate_programs",
+      "source": "https://www.gnu.org/licenses/gpl-faq.en.html#MereAggregation",
+      "finding": "The FSF distinguishes ordinary pipes/sockets/command-line communication from intimate exchange of internal structures. HTTP service separation alone neither extends GPL to unrelated business code nor resolves the licensing of the service's internally linked libraries."
+    },
+    {
+      "topic": "ffmpeg_build",
+      "source": "https://ffmpeg.org/doxygen/6.1/md_LICENSE.html",
+      "local_evidence": "FFMPEG_RUNTIME.json",
+      "finding": "The installed FFmpeg 6.1.1 Ubuntu libraries were configured with --enable-gpl and report GPL version 2 or later. FFmpeg's license documentation explains the effect of enabling GPL components. No CUDA-specific linking exception was identified in this license document."
+    },
+    {
+      "topic": "apache_gpl_compatibility",
+      "source": "https://www.apache.org/licenses/GPL-compatibility.html",
+      "finding": "The Apache Software Foundation states that Apache-2.0 code may be included in GPLv3 works and is not GPLv2 compatible. The 'or later' permissions of FFmpeg and every relevant linked dependency need to be checked before selecting GPLv3 for the engine combination. Individual source licenses remain preserved."
+    },
+    {
+      "topic": "cuda_distribution",
+      "source": "https://docs.nvidia.com/cuda/archive/13.1.0/eula/index.html",
+      "sections": ["1.1.1(3)", "1.1.2", "1.1.6", "1.2(5)", "2.3", "2.6 Attachment A"],
+      "local_evidence": "licenses/cuda/EULA.txt",
+      "permitted_runtime_files": ["libcudart.so", "libcudart_static.a", "libcudadevrt.a"],
+      "finding": "The CUDA attachment lists these runtime redistributables. Section 1.1.6 permits developing applications under OSI-approved licenses subject to other terms. Section 1.2(5) restricts subjecting SDK components themselves to open-source obligations. These are not a blanket prohibition on an open-source application using CUDA."
+    },
+    {
+      "topic": "gpl_system_library_scope",
+      "sources": ["https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#section3", "https://www.gnu.org/licenses/gpl-3.0.html#section1", "https://www.gnu.org/licenses/gpl-3.0.html#section6"],
+      "local_evidence": ["licenses/GPL-2", "licenses/GPL-3", "BUILD_ENVIRONMENT.json", "elf-dynamic.txt"],
+      "finding": "GPLv2 section 3 and GPLv3 sections 1/6 provide System Library or source-scope exclusions. Applicability to this specific CUDA driver/runtime/device-runtime combination has not been established. The original link command includes dynamic libcudart and static CUDA archive arguments; ldd alone does not show which static archive members are present."
+    }
+  ],
+  "unresolved": [
+    "Confirm whether each CUDA element in the linked engine qualifies for the relevant GPL exclusion or has a sufficient linking permission.",
+    "Confirm the applicable GPL version and all licenses across the actual linked engine distribution.",
+    "Verify corresponding source coverage for every redistributed system-library package and its exact distribution patches; RUNTIME_PACKAGES.json supplies observed identities."
+  ],
+  "not_conclusions": [
+    "No conclusion that RUR1BIDX's independent business code must be published.",
+    "No conclusion that CUDA use by open-source programs is categorically forbidden.",
+    "No conclusion that replacing FFmpeg is mandatory.",
+    "No conclusion that publishing sources alone resolves every combined-distribution condition."
+  ]
+}

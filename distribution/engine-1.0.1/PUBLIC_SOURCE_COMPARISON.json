@@ -1,0 +1,21 @@
+{
+  "public_revision": "18976e6f425a9e4ccc3551e04ff95a9b1e8cb191",
+  "public_checkout_dirty": false,
+  "shipped_file_count": 1679,
+  "public_file_count": 1682,
+  "changed_content": [
+    ".gitignore",
+    "README.md",
+    "docs/serving.md",
+    "tests/README.md",
+    "third_party/xgrammar/cpp/fsm_builder.h"
+  ],
+  "shipped_only": [],
+  "public_only": [
+    "docs/performance/structured-output.md",
+    "tests/text/compare_schema_semantics.py",
+    "tests/text/schema_semantics_oracle.py"
+  ],
+  "same_content_count": 1674,
+  "code_difference_note": "The only changed C/C++ file differs by an added public modification-attribution comment. No implementation difference was found."
+}

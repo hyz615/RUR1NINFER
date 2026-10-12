@@ -1,0 +1,10 @@
+RUR1 NInfer engine 1.0.1
+
+Built from NInfer (https://github.com/Neroued/ninfer), licensed under the Apache-2.0 license; see LICENSE.
+The distributor modified the original work; the files changed relative to upstream local-pr-source/master (merge base 9e163eee4b8acec21ab0ac765107b6a3f287b217) are listed in MODIFIED_FILES.txt.
+Source revision: 79d229656b297ff9932a58c3664dd56d87a73522 with uncommitted changes
+The corresponding source of this build is in source.tar.gz.
+Third-party components and their LICENSE / NOTICE files are under third_party/.
+The NVIDIA CUDA runtime (13.1.80) is redistributed under the NVIDIA CUDA Toolkit EULA, see cuda/EULA.txt.
+
+本引擎由 NInfer 修改编译，按 Apache-2.0 许可证分发；修改过的文件见 MODIFIED_FILES.txt，第三方组件许可证见 third_party/，CUDA 运行库按 NVIDIA 许可协议随附。

@@ -1,0 +1,34 @@
+Source licenses and linked-distribution scope
+
+NInfer's own source remains under Apache-2.0; the existing root LICENSE and all
+third-party copyright notices and licenses are preserved. This disclosure does
+not replace those licenses or relabel the entire repository as GPL.
+
+The existing 1.0.1 executable dynamically loads Ubuntu FFmpeg libraries compiled
+with --enable-gpl. These libraries report GPL version 2 or later. Their GPL terms
+and corresponding source obligations must be considered for the linked engine
+distribution; an Apache-only notice is not a determination for that combination.
+
+RUR1BIDX communicates with the engine as a separate HTTP service. Publication of
+this engine's source does not, solely because of that communication mechanism,
+require publication of RUR1BIDX's independent business code. Legal scope depends
+on the actual relationship between the programs, not merely a process name.
+
+Apache-2.0 code can be included in a GPLv3-covered combination, but compatibility
+with GPLv2-only terms must not be assumed. FFmpeg's 'or later' statement supports
+reviewing a GPLv3 distribution route; every relevant dependency must permit it.
+
+NVIDIA's CUDA agreement identifies the runtime redistributables and permits SDK
+use to develop open-source applications, subject to the rest of the agreement.
+It also restricts making SDK components subject to open-source license duties.
+No specific FFmpeg-to-CUDA linking exception was identified in the material
+reviewed. Whether GPL System Library exclusions apply to this concrete driver,
+runtime and device-runtime combination remains unresolved. A source repository
+alone does not settle that question, nor establish that infringement occurred.
+
+The copied ORIGINAL_NOTICE.txt is retained as historical provenance. Its Apache
+statement describes NInfer source; it must not be read as licensing all linked
+third-party libraries or resolving the GPL/CUDA distribution question.
+
+No LGPL replacement engine is selected by this source release. The shipped engine
+version, binary and its existing operational configuration remain unchanged.

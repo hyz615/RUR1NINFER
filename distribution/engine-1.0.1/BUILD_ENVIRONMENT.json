@@ -1,0 +1,37 @@
+{
+  "cmake_options": {
+    "CMAKE_BUILD_TYPE": "Release",
+    "CMAKE_CUDA_COMPILER": "/usr/local/cuda-13.1/bin/nvcc",
+    "CMAKE_CUDA_ARCHITECTURES": "120a",
+    "CMAKE_C_COMPILER": "/usr/bin/cc",
+    "CMAKE_CXX_COMPILER": "/usr/bin/c++",
+    "CMAKE_GENERATOR": "Ninja",
+    "NINFER_BUILD_APPS": "ON",
+    "BUILD_TESTING": "ON",
+    "NINFER_BUILD_BENCHMARKS": "OFF"
+  },
+  "original_link_command": ": && /usr/bin/c++ -O3 -DNDEBUG  apps/CMakeFiles/ninfer-serve.dir/serve/main.cpp.o -o apps/ninfer-serve -L/usr/local/cuda-13.1/targets/x86_64-linux/lib/stubs   -L/usr/local/cuda-13.1/targets/x86_64-linux/lib -Wl,-rpath,/usr/local/cuda-13.1/targets/x86_64-linux/lib  src/serve/libninfer_serve.a  src/product/libninfer_product_logging.a  third_party/spdlog/libninfer_third_party_spdlog.a  src/runtime/libninfer_engine.a  src/models/libninfer_model_runtime.a  src/models/libninfer_model_loading.a  third_party/llama-jinja/libninfer_jinja.a  src/artifact/libninfer_artifact.a  src/runtime/libninfer_runtime_support.a  src/ops/libninfer_ops.a  src/ops/libninfer_nvfp4_non_rdc.a  src/core/libninfer_core.a  -ldl  /usr/local/cuda-13.1/targets/x86_64-linux/lib/stubs/libcuda.so  src/text/libninfer_text.a  third_party/xgrammar/libninfer_xgrammar.a  src/media/libninfer_media_decode.a  /usr/lib/x86_64-linux-gnu/libavformat.so  /usr/lib/x86_64-linux-gnu/libavcodec.so  /usr/lib/x86_64-linux-gnu/libavutil.so  /usr/lib/x86_64-linux-gnu/libswscale.so  src/product/libninfer_product_prompt_input.a  src/product/libninfer_media_acquire.a  /usr/lib/x86_64-linux-gnu/libcurl.so  /usr/local/cuda-13.1/targets/x86_64-linux/lib/libcudart.so  -lcudadevrt  -lcudart_static  -lrt  -lpthread  -ldl && :",
+  "tool_versions": {
+    "cmake": [
+      "cmake version 3.28.3",
+      "",
+      "CMake suite maintained and supported by Kitware (kitware.com/cmake)."
+    ],
+    "ninja": [
+      "1.11.1"
+    ],
+    "gcc": [
+      "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+      "Copyright (C) 2023 Free Software Foundation, Inc.",
+      "This is free software; see the source for copying conditions.  There is NO",
+      "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+    ],
+    "cuda": [
+      "nvcc: NVIDIA (R) Cuda compiler driver",
+      "Copyright (c) 2005-2025 NVIDIA Corporation",
+      "Built on Fri_Nov__7_07:23:37_PM_PST_2025",
+      "Cuda compilation tools, release 13.1, V13.1.80",
+      "Build cuda_13.1.r13.1/compiler.36836380_0"
+    ]
+  }
+}

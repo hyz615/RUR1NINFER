@@ -1,4 +1,3 @@
-// RUR1NINFER modifications: public logical JSON-string regex builder entry point. Original license retained.
 /*!
  *  Copyright (c) 2025 by Contributors
  * \file xgrammar/fsm_builder.h
