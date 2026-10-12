@@ -20,15 +20,35 @@
     {
       "topic": "cuda_distribution",
       "source": "https://docs.nvidia.com/cuda/archive/13.1.0/eula/index.html",
-      "sections": ["1.1.1(3)", "1.1.2", "1.1.6", "1.2(5)", "2.3", "2.6 Attachment A"],
+      "sections": [
+        "1.1.1(3)",
+        "1.1.2",
+        "1.1.6",
+        "1.2(5)",
+        "2.3",
+        "2.6 Attachment A"
+      ],
       "local_evidence": "licenses/cuda/EULA.txt",
-      "permitted_runtime_files": ["libcudart.so", "libcudart_static.a", "libcudadevrt.a"],
+      "permitted_runtime_files": [
+        "libcudart.so",
+        "libcudart_static.a",
+        "libcudadevrt.a"
+      ],
       "finding": "The CUDA attachment lists these runtime redistributables. Section 1.1.6 permits developing applications under OSI-approved licenses subject to other terms. Section 1.2(5) restricts subjecting SDK components themselves to open-source obligations. These are not a blanket prohibition on an open-source application using CUDA."
     },
     {
       "topic": "gpl_system_library_scope",
-      "sources": ["https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#section3", "https://www.gnu.org/licenses/gpl-3.0.html#section1", "https://www.gnu.org/licenses/gpl-3.0.html#section6"],
-      "local_evidence": ["licenses/GPL-2", "licenses/GPL-3", "BUILD_ENVIRONMENT.json", "elf-dynamic.txt"],
+      "sources": [
+        "https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#section3",
+        "https://www.gnu.org/licenses/gpl-3.0.html#section1",
+        "https://www.gnu.org/licenses/gpl-3.0.html#section6"
+      ],
+      "local_evidence": [
+        "licenses/GPL-2",
+        "licenses/GPL-3",
+        "BUILD_ENVIRONMENT.json",
+        "elf-dynamic.txt"
+      ],
       "finding": "GPLv2 section 3 and GPLv3 sections 1/6 provide System Library or source-scope exclusions. Applicability to this specific CUDA driver/runtime/device-runtime combination has not been established. The original link command includes dynamic libcudart and static CUDA archive arguments; ldd alone does not show which static archive members are present."
     }
   ],
@@ -42,5 +62,10 @@
     "No conclusion that CUDA use by open-source programs is categorically forbidden.",
     "No conclusion that replacing FFmpeg is mandatory.",
     "No conclusion that publishing sources alone resolves every combined-distribution condition."
-  ]
+  ],
+  "follow_up": {
+    "assessment": "GPLV3_ASSESSMENT.json",
+    "host_link_evidence": "HOST_LINK_REVIEW.json",
+    "result": "GPLv3 route reviewed; host final-link static archive ambiguity resolved; concrete CUDA System Library classification remains open."
+  }
 }

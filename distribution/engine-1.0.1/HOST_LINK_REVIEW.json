@@ -1,0 +1,17 @@
+{
+  "original_sha256": "ca3bc3f6746888c695f8ec1121366baa0f5b1fb1eea53623db3ce1e8b5872dfd",
+  "relinked_sha256": "ca3bc3f6746888c695f8ec1121366baa0f5b1fb1eea53623db3ce1e8b5872dfd",
+  "byte_identical": true,
+  "original_unchanged": true,
+  "cuda_archive_member_lines": {
+    "libcudart_static.a": [],
+    "libcudadevrt.a": []
+  },
+  "cuda_archive_load_lines": [
+    "LOAD /usr/local/cuda-13.1/targets/x86_64-linux/lib/libcudadevrt.a",
+    "LOAD /usr/local/cuda-13.1/targets/x86_64-linux/lib/libcudart_static.a"
+  ],
+  "link_map_sha256": "0b1dd27f0b21c79fab56a611fb3ff8c8f2a4aa7df2a2056399ba5736325d114d",
+  "binary_executed": false,
+  "scope": "Host final-link map; embedded CUDA device code in previously built objects needs separate review."
+}

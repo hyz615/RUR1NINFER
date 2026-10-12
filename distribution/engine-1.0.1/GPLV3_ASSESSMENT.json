@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "scope": "Assessment of the proposal to change RUR1NINFER to GPL; not an additional linking permission or a commercial-distribution clearance.",
+  "license_change_applied": false,
+  "candidate_combination_license": "GPL-3.0",
+  "original_source_license": "Apache-2.0",
+  "original_source_license_sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+  "findings": [
+    {
+      "topic": "apache_and_gpl",
+      "result": "Apache-2.0 source may be included in a GPLv3-covered combination while preserving its original license and notices. GPLv2-only is not a compatible choice. Replacing the repository LICENSE is not necessary merely to preserve that GPLv3 distribution route.",
+      "sources": [
+        "https://www.apache.org/licenses/GPL-compatibility.html",
+        "https://www.apache.org/licenses/LICENSE-2.0"
+      ]
+    },
+    {
+      "topic": "ffmpeg",
+      "result": "The observed FFmpeg libraries state GPL version 2 or later. This permits examining a GPLv3 route for the combination, subject to every other linked component and the applicable distribution duties.",
+      "evidence": "FFMPEG_RUNTIME.json",
+      "source": "https://ffmpeg.org/doxygen/6.1/md_LICENSE.html"
+    },
+    {
+      "topic": "host_static_link",
+      "result": "Replaying the original final link with a map produces the exact shipped engine SHA-256. Neither libcudart_static.a nor libcudadevrt.a contributes archive members at the host final-link stage. Their flags alone do not prove host static inclusion.",
+      "evidence": "HOST_LINK_REVIEW.json"
+    },
+    {
+      "topic": "device_link_boundary",
+      "result": "The recorded build has earlier CUDA device-link objects in ninfer_core and ninfer_ops, with cudadevrt/cudart_static inputs. The host-link result does not establish absence of embedded CUDA device-runtime code."
+    },
+    {
+      "topic": "system_library_route",
+      "result": "GPLv3 section 1 explicitly includes a compiler used to produce the work within Major Component and defines qualifying System Libraries. Thus a proprietary compiler/runtime is not automatically incompatible. Whether each actual CUDA driver/runtime/device-runtime element meets those criteria remains an assessment separate from the repository license label.",
+      "sources": [
+        "https://www.gnu.org/licenses/gpl-3.0.html#section1",
+        "https://gcc.gnu.org/onlinedocs/gcc/Copying.html",
+        "https://www.gnu.org/licenses/gpl-faq.en.html#SystemLibraryException"
+      ]
+    },
+    {
+      "topic": "cuda_terms",
+      "result": "CUDA 13.1 identifies driver/runtime redistributables and permits SDK use for OSI-licensed applications subject to its other terms. It restricts subjecting SDK components themselves to source-disclosure/relicensing duties. Changing RUR1NINFER to GPL does not change those NVIDIA terms.",
+      "source": "https://docs.nvidia.com/cuda/archive/13.1.0/eula/index.html"
+    },
+    {
+      "topic": "exception_authority",
+      "result": "An exception added to RUR1-authored code cannot grant an exception for third-party GPL code such as FFmpeg or its GPL dependencies. If the System Library route does not apply, permission must cover the actual copyright holders or the linking arrangement must change.",
+      "source": "https://www.gnu.org/licenses/gpl-faq.en.html#GPLIncompatibleLibs"
+    }
+  ],
+  "decision": "Do not treat a blanket LICENSE replacement as a verified remedy. GPLv3 is a plausible combination-level route; preserve upstream licenses and establish the CUDA scope before claiming the concrete binary is cleared for commercial distribution.",
+  "runtime_binary_replaced": false,
+  "default_branch_modified": false,
+  "real_model_executed": false
+}
